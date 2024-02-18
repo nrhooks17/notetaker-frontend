@@ -51,7 +51,7 @@ export class NoteRepository extends Repository{
     /**
      * Grabs the total amount of pages in a notebook
      */
-  public async getTotalPages(): Promise<Response> {
+  public async getTotalPages(): Promise<number> {
       try {
           const response: Response = await fetch(`${this.baseUrl}/total_pages`)
           return await response.json()

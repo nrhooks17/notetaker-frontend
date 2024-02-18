@@ -1,10 +1,13 @@
-import {NotePaginationProps} from "@/app/notes/_interfaces/NotePaginationProps";
-import {MouseEventHandler, useState, useEffect, useMemo} from "react";
-export default function NotePagination({handleAddPage, handleRetrievePage, page}: NotePaginationProps){
+import {MouseEventHandler, useState, useEffect, useMemo, useContext, Context} from "react";
+import {NotePaginationContext} from "@/app/notes/_components/_contexts/NotePaginationContext";
+import {NotePaginationContextType} from "@/app/notes/_interfaces/NotePaginationContextType";
+export default function NotePagination(){
 
+    const notePaginationProps: NotePaginationContextType = useContext(NotePaginationContext)
+    const { handleAddPage, handleRetrievePage, page , totalPages } = notePaginationProps;
     const [pageButtons, setPageButtons] = useState<any[]>([]);
 
-     const tempPageButtons: any[] = useMemo(() => {
+    const tempPageButtons: any[] = useMemo(() => {
          const handleAddPageButtonClicked = async (event: MouseEventHandler<HTMLButtonElement>): Promise<void> => {
              //grab the number of pages from the page buttons
              let numPages = pageButtons.length
@@ -17,9 +20,7 @@ export default function NotePagination({handleAddPage, handleRetrievePage, page}
          }
 
          return buttons;
-     }, [pageButtons, handleAddPage, page]);
-
-
+    }, [pageButtons, handleAddPage, page]);
 
     useEffect(() => {
         setPageButtons(tempPageButtons);

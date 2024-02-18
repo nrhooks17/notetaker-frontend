@@ -1,14 +1,15 @@
 'use client';
 
-import {useEffect, useState, useRef, useContext, createContext} from "react";
+import React from 'react';
+import { useEffect, useState, useRef } from "react";
 import NoteInput from "@/app/notes/_components/NoteInput";
 import NoteList from "@/app/notes/_components/NoteList";
 import {Note} from "@/app/notes/_interfaces/Note";
 import DaysOfWeek from "@/app/notes/_components/DaysOfWeek";
 import CurrentDate from "@/app/notes/_components/CurrentDate";
 import { NoteRepository } from "@/app/notes/_repositories/NoteRepository";
-
-const NotePaginationContext = createContext({});
+import { NotePaginationContext } from "@/app/notes/_components/_contexts/NotePaginationContext";
+import { NotePaginationContextType } from "@/app/notes/_interfaces/NotePaginationContextType";
 
 export default function Notes(){
     let noteRepository: NoteRepository = useRef(new NoteRepository()).current;
@@ -19,21 +20,21 @@ export default function Notes(){
     const [totalPages, setTotalPages] = useState<number>(1);
     const [pageButtonClicked, setNewPageSubmitted] = useState<boolean>(false);
 
-    const fetchNotes = async (): Promise<void> => {
-
-        let notesFromBackend = await noteRepository.getAll(page);
-
-        // @ts-ignore
-        setNotes([...notesFromBackend])
-    };
-
-    const fetchTotalPages = async (): Promise<void> => {
-        let totalPages = await noteRepository.getTotalPages()
-
-        setTotalPages(parseInt(totalPages))
-    }
 
     useEffect(() => {
+        const fetchNotes = async (): Promise<void> => {
+
+            let notesFromBackend = await noteRepository.getAll(page);
+
+            // @ts-ignore
+            setNotes([...notesFromBackend])
+        };
+
+        const fetchTotalPages = async (): Promise<void> => {
+            let totalPages: number = await noteRepository.getTotalPages()
+
+            setTotalPages(totalPages)
+        }
 
         if(noteSubmitted) {
             fetchNotes();
@@ -41,7 +42,7 @@ export default function Notes(){
         }
 
         setNoteSubmitted(false);
-    }, [noteRepository, noteSubmitted, page, fetchNotes, fetchTotalPages]);
+    }, [noteRepository, noteSubmitted, page]);
 
     /* function that will be passed as a prop to the noteInput component in order to set the setNoteSubmitted value
     when a new note is submitted.*/
@@ -65,7 +66,7 @@ export default function Notes(){
 
     }
 
-    const notePaginationProps = {
+    const notePaginationProps: NotePaginationContextType = {
         handleAddPage: handleAddPage,
         handleRetrievePage: handleRetrievePage,
         page: page,
