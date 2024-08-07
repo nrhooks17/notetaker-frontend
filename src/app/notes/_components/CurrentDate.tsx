@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-export default function CurrentDate() {
+export default function CurrentDate(): JSX.Element {
 
     const [currentDate, setCurrentDate] = useState<string>("");
 

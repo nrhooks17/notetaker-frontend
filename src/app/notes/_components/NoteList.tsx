@@ -1,7 +1,7 @@
 import {Note} from "@/app/notes/_interfaces/Note";
 import { NoteListProps } from "@/app/notes/_interfaces/NoteListProps";
 import NotePagination from "@/app/notes/_components/NotePagination";
-export default function NoteList({notes  }: NoteListProps){
+export default function NoteList({notes  }: NoteListProps): JSX.Element {
     return (
         <div className={'flow note-list note-list-container'}>
             {/*<NotePagination></NotePagination>*/}
@@ -14,6 +14,7 @@ export default function NoteList({notes  }: NoteListProps){
                     })
                 }
             </ul>
+            <NotePagination></NotePagination>
         </div>
     );
 }

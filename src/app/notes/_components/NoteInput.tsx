@@ -1,14 +1,12 @@
 import {
     ChangeEvent,
     FormEvent,
-    KeyboardEventHandler,
-    FormEventHandler,
     useState,
 } from 'react';
 import { NoteInputProps } from "@/app/notes/_interfaces/NoteInputProps";
-import { NoteRepository } from "@/app/notes/_repositories/NoteRepository";
+import { NoteProvider } from "@/app/notes/_repositories/NoteProvider";
 
-export default function NoteInput({onAddNote, handleNoteSubmitted}: NoteInputProps) {
+export default function NoteInput({page, notebook, onAddNote, handleNoteSubmitted}: NoteInputProps): JSX.Element {
 
     //this handleSubmit function is the function that runs the onAddNote function when the submit button is pressed.
     const [noteContent, setNoteContent] = useState<string>("");
@@ -17,7 +15,7 @@ export default function NoteInput({onAddNote, handleNoteSubmitted}: NoteInputPro
     const submitNoteAction = async (event: FormEvent<HTMLFormElement> | KeyboardEvent) => {
         event.preventDefault();
 
-        let noteRepository: NoteRepository = new NoteRepository();
+        let noteRepository: NoteProvider = new NoteProvider();
 
         /*
          run some ajax code to call the notetaker api.
@@ -27,21 +25,9 @@ export default function NoteInput({onAddNote, handleNoteSubmitted}: NoteInputPro
             onAddNote({text: noteContent});
 
             try {
-                let page: number = 1;
-                let notebook: string = "default";
-
-                let response: Response = await noteRepository.post(
-                    { "text": noteContent, "page": page, "notebook": notebook}
-                );
-
-                 if(response && response.status == 200){
-                    let result = await response.json()
-                    console.log(result.message);
-                }
-                else {
-                    console.error("Something went wrong with submitting the note: " + noteContent + " to the api.");
-                }
+                 await noteRepository.post({ "text": noteContent, "page": page, "notebook": notebook});
             } catch (error) {
+                console.error("Something went wrong with submitting the note: " + noteContent + " to the api.");
                 console.error(error);
             }
 
@@ -53,14 +39,14 @@ export default function NoteInput({onAddNote, handleNoteSubmitted}: NoteInputPro
     };
 
     //this here basically calls the onAddNote function which adds a new note using the string from noteContent
-    const handleEnterPress: KeyboardEventHandler<HTMLFormElement>  = async (event ): Promise<void> => {
+    const handleEnterPress = async (event ): Promise<void> => {
         if (event.key == 'Enter') {
             event.preventDefault();
             await submitNoteAction(event);
         }
     }
 
-    const handleSubmit: FormEventHandler<HTMLFormElement> = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
         await submitNoteAction(event);
     }
 
@@ -76,12 +62,4 @@ export default function NoteInput({onAddNote, handleNoteSubmitted}: NoteInputPro
           <button className={'flow submit-button'}>Submit Note</button>
         </form>
     );
-}
-
-/**
- * This function is used to get the notes from the api.
- */
-async function getNotes(): Promise<Response>{
-    const response : Response = await fetch('http://localhost:3000/api/notes');
-    return response.json();
 }

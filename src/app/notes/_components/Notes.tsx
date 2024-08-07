@@ -1,90 +1,148 @@
 'use client';
 
-import React from 'react';
+import React, {useCallback} from 'react';
 import { useEffect, useState, useRef } from "react";
 import NoteInput from "@/app/notes/_components/NoteInput";
 import NoteList from "@/app/notes/_components/NoteList";
+import NotebookSelect from "@/app/notes/_components/NotebookSelect";
 import {Note} from "@/app/notes/_interfaces/Note";
 import DaysOfWeek from "@/app/notes/_components/DaysOfWeek";
 import CurrentDate from "@/app/notes/_components/CurrentDate";
-import { NoteRepository } from "@/app/notes/_repositories/NoteRepository";
+import NotebookCreate from "@/app/notes/_components/NotebookCreate";
+import { NoteProvider } from "@/app/notes/_repositories/NoteProvider";
+import { NotebookProvider } from "@/app/notes/_repositories/NotebookProvider";
 import { NotePaginationContext } from "@/app/notes/_components/_contexts/NotePaginationContext";
 import { NotePaginationContextType } from "@/app/notes/_interfaces/NotePaginationContextType";
 
-export default function Notes(){
-    let noteRepository: NoteRepository = useRef(new NoteRepository()).current;
+export default function Notes(): JSX.Element {
+    //object with all my ajax calls
+    let noteRepository: NoteProvider = useRef(new NoteProvider()).current;
+    let notebookRepository: NotebookProvider = useRef(new NotebookProvider()).current;
 
+    //state for notes
     const [notes, setNotes] = useState<Note[]>([]);
-    const [page , setPage] = useState<number>(1);
-    const [noteSubmitted, setNoteSubmitted] = useState<boolean>(true);
-    const [totalPages, setTotalPages] = useState<number>(1);
-    const [pageButtonClicked, setNewPageSubmitted] = useState<boolean>(false);
+    const [notebooks, setNotebooks] = useState<string[]>([]);
 
+    // Later, I need to add some sort of account functionality that will allow me to set the notebook to the user's default notebook.
+    // this needs to be in the parent because it is use by both the NotebookCreate component and the NotebookSelect component.
+    const [notebook, setNotebook] = useState<string>("");
 
-    useEffect(() => {
-        const fetchNotes = async (): Promise<void> => {
+    //also needs to be in the parent as it is used when we fetch notes from the backend.
+    const [page, setPage ] = useState<number>(1);
+    const [totalPages, setTotalPages] = useState<number>(0);
 
-            let notesFromBackend = await noteRepository.getAll(page);
+    const [noteSubmitted, setNoteSubmitted] = useState<boolean>(false);
+    const [notebookCreated, setNotebookCreated] = useState<boolean>(false);
 
-            // @ts-ignore
+    //function that will be called to fetch notes from the backend
+    const fetchNotes = useCallback(async (page: number = 1, notebook: string): Promise<void> => {
+        try {
+            let response: Response = await noteRepository.getAll(page, notebook);
+            let notesFromBackend: Note[] = response.notes;
             setNotes([...notesFromBackend])
-        };
-
-        const fetchTotalPages = async (): Promise<void> => {
-            let totalPages: number = await noteRepository.getTotalPages()
-
-            setTotalPages(totalPages)
+            // need to have some sort of transformer on the backend
+            setTotalPages(response.total_pages)
+        } catch(e)
+        {
+            console.error('Error fetching notes: ', e);
         }
+    }, [page])
 
-        if(noteSubmitted) {
-            fetchNotes();
-            fetchTotalPages();
+    // function that will be called to fetch notebooks from the backend
+    const fetchNotebooks = useCallback(async (): Promise<void> => {
+        try{
+            // fetch notebooks
+            const response = await notebookRepository.getAll(page, notebook)
+
+            // set notebooks
+            setNotebooks(response.notebooks)
+
+        }catch (e){
+            console.error('Error fetching notebook data: ', e);
         }
+    }, [])
 
-        setNoteSubmitted(false);
-    }, [noteRepository, noteSubmitted, page]);
+    //useEffect that will be run when a note is submitted
+    useEffect(() => {
+        if (noteSubmitted){
+            fetchNotes(page, notebook).finally(() => {
+                // need to set both to false as both could cause the fetchNotes function to be called.
+                setNoteSubmitted(false)
+            })
+        }
+    }, [noteSubmitted, fetchNotes]);
+
+    //useEffect that will be run when the component is mounted an when a page or a notebook changes.
+    useEffect( () => {
+        try {
+            fetchNotes(page, notebook)
+        } catch (e) {
+            console.error('Error fetching notes: ', e)
+        }
+    }, [page, notebook])
+
+    //useEffect that will be run when a selected notebook changes.
+    useEffect(() => {
+        if (notebookCreated) {
+            try {
+                fetchNotebooks()
+            } catch (e) {
+                console.error('Error fetching notebooks: ', e)
+            } finally {
+                setNotebookCreated(false)
+            }
+        }
+    }, [notebook])
+
+   //useEffect that will be rand when the component is mounted.
+    useEffect(() => {
+        try {
+            fetchNotebooks()
+        } catch (e) {
+            console.error('Error fetching notebooks: ', e)
+        }
+    }, [])
 
     /* function that will be passed as a prop to the noteInput component in order to set the setNoteSubmitted value
     when a new note is submitted.*/
-    const handleNoteSubmitted = (): void => {
+    const handleNoteSubmitted = useCallback((): void => {
         setNoteSubmitted(true)
-    }
+    }, [])
+
+    const handleNotebookChanged = useCallback((notebook: string): void => {
+        setNotebook(notebook)
+        // everytime a notebook is changed, need to go back to the first page.
+        setPage(1)
+    }, [notebook])
+
 
     // Adds a note to the list after it has been submitted.
-    const addNote = (newNote: Note) => {
-        setNotes([...notes, newNote]);
-    }
-
-    // Function to handle adding a new page to the note list
-    const handleAddPage = (numPages: number): void => {
-        console.log(numPages)
-        setPage(numPages++)
-    }
-
-    //
-    const handleRetrievePage = (page: number): void => {
-
-    }
+    const addNote = useCallback((newNote: Note): void => {
+        setNotes((prevNotes) => [...prevNotes, newNote]);
+    }, [])
 
     const notePaginationProps: NotePaginationContextType = {
-        handleAddPage: handleAddPage,
-        handleRetrievePage: handleRetrievePage,
         page: page,
         totalPages: totalPages,
+        setPage: setPage,
     }
-
 
     return (
         <div className={'container'}>
-            <h1 className={'flow note-header'}>Note Taker</h1>
-            <NoteInput onAddNote={addNote} handleNoteSubmitted={handleNoteSubmitted}></NoteInput>
+
+            <header className={'flow note-header'}>
+                <h1>Note Taker</h1>
+                <p><strong>Current Notebook:</strong> {notebook}</p>
+            </header>
+            <NoteInput page={page} notebook={notebook} onAddNote={addNote} handleNoteSubmitted={handleNoteSubmitted}></NoteInput>
 
             <NotePaginationContext.Provider value={notePaginationProps}>
-                <NoteList notes={notes} handleAddPage={handleAddPage} handleRetrievePage={handleRetrievePage} page={page}></NoteList>
+                <NoteList notes={notes}></NoteList>
             </NotePaginationContext.Provider>
-
+            <NotebookCreate setNotebook={setNotebook} setNotebookCreated={setNotebookCreated}></NotebookCreate>
+            <NotebookSelect handleNotebookChanged={handleNotebookChanged} notebooks={notebooks} notebook={notebook}></NotebookSelect>
             <CurrentDate></CurrentDate>
-            <DaysOfWeek></DaysOfWeek>
+            <DaysOfWeek setNotes={setNotes} setTotalPages={setTotalPages} page={page} notebook={notebook}></DaysOfWeek>
         </div>
     );
 }

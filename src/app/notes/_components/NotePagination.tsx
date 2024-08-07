@@ -1,36 +1,37 @@
-import {MouseEventHandler, useState, useEffect, useMemo, useContext, Context} from "react";
+import {MouseEventHandler, useState, useEffect, useContext, MouseEvent} from "react";
 import {NotePaginationContext} from "@/app/notes/_components/_contexts/NotePaginationContext";
 import {NotePaginationContextType} from "@/app/notes/_interfaces/NotePaginationContextType";
 export default function NotePagination(){
 
     const notePaginationProps: NotePaginationContextType = useContext(NotePaginationContext)
-    const { handleAddPage, handleRetrievePage, page , totalPages } = notePaginationProps;
+    const { page , totalPages, setPage} = notePaginationProps;
     const [pageButtons, setPageButtons] = useState<any[]>([]);
 
-    const tempPageButtons: any[] = useMemo(() => {
-         const handleAddPageButtonClicked = async (event: MouseEventHandler<HTMLButtonElement>): Promise<void> => {
-             //grab the number of pages from the page buttons
-             let numPages = pageButtons.length
-             handleAddPage(numPages);
-         }
+    const changePage: MouseEventHandler = (event: MouseEvent<HTMLButtonElement>) => {
+        let newPage: number = parseInt(event.currentTarget.value);
+        setPage(newPage);
+    }
 
-         const buttons: any[] = [];
-         for (let i: number= 0; i <= page; i++ ) {
-             buttons.push(<button id={"page_button_" + i} onClick={handleAddPageButtonClicked} className={'note-pagination-buttons'}>{i}</button>)
-         }
-
-         return buttons;
-    }, [pageButtons, handleAddPage, page]);
+    const createPageButtons = () => {
+        setPageButtons([]);
+        console.log(totalPages)
+        let buttons: any[]  = []
+        for (let i: number = 0; i  < totalPages; i++){
+            let pageNumber: number = i + 1;
+            let pageButton: JSX.Element = <button className={"page-button"} key={i} onClick={changePage} value={pageNumber}>{pageNumber}</button>
+            buttons.push(pageButton);
+        }
+        setPageButtons(buttons)
+    }
 
     useEffect(() => {
-        setPageButtons(tempPageButtons);
-    },[tempPageButtons])
+        createPageButtons();
+    }, [totalPages])
 
     return (
-        <div>
-            <button onClick={handleAddPage} className={'note-list-pagination'}>Add Page</button>
+        <div className={'note-pagination'}>
             {pageButtons.map((pageButtons, index) => (
-                <div key={index} id={"page_button_div_" + index}>
+                <div key={index} id={"page_button_" + index}>
                     {pageButtons}
                 </div>
             ))}
