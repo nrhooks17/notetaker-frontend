@@ -5,30 +5,31 @@ import { useState, useEffect, MouseEventHandler, MouseEvent } from 'react';
 import { NoteProvider } from "@/app/notes/_repositories/NoteProvider";
 import { DaysOfWeekProps } from "@/app/notes/_interfaces/DaysOfWeekProps";
 
-export default function DaysOfWeek({setNotes, setTotalPages, notebook}: DaysOfWeekProps): JSX.Element  {
+export default function DaysOfWeek({ dateSelected, setDateSelected, setUpperDateBound, setLowerDateBound }: DaysOfWeekProps): JSX.Element  {
     //need days just for this component. If this is used in others, then move to a constants file.
     const [previousSevenDays, setPreviousSevenDays] = useState<Array<Object>>([]);
-    const dateFormat = 'yyyy-MM-dd HH:mm:ss'
-
-    // class that holds all the ajax calls for notes.
-    const noteRepository: NoteProvider = new NoteProvider();
+    const dateFormat: string = 'yyyy-MM-dd HH:mm:ss'
 
     // grabs notes based off of the date selected.
     const handleDateSelected: MouseEventHandler = async (event: MouseEvent<HTMLButtonElement>): Promise<void> => {
-        let selectedDate: Date = new Date(event.currentTarget.value.replace(/-/g, '\/').replace(/T.+/, ''))
-        let nextDate: Date = new Date((selectedDate.getTime() + (24 * 60 * 60 * 1000)));
+        //set the date that is being selected
+        setDateSelected(event.currentTarget.value);
 
-        let formattedSelectedDate: string = formatInTimeZone(selectedDate, 'UTC', dateFormat);
-        let formattedNextDate: string = formatInTimeZone(nextDate, 'UTC', dateFormat);
+        let formattedSelectedDate: string = "";
+        let formattedNextDate: string = "";
 
-        let response: Response = await noteRepository.getAll(1, notebook, formattedNextDate, formattedSelectedDate);
+        if(event.currentTarget.value !== ""){
+            let selectedDate: Date = new Date(event.currentTarget.value.replace(/-/g, '\/').replace(/T.+/, ''))
+            let nextDate: Date = new Date((selectedDate.getTime() + (24 * 60 * 60 * 1000)));
 
-        setNotes(response.notes);
-        setTotalPages(response.total_pages);
+            formattedSelectedDate = formatInTimeZone(selectedDate, 'UTC', dateFormat);
+            formattedNextDate = formatInTimeZone(nextDate, 'UTC', dateFormat);
+        }
+
+        //set date bounds
+        setUpperDateBound(formattedNextDate);
+        setLowerDateBound(formattedSelectedDate);
     }
-
-    // tries and guesses the client's timezone.
-    const retrieveClientTimeZone = (): string => moment.tz.guess();
 
     // function to format the date string to yyyy-MM-dd and the day of the week.
     const formatDate = (day: Date, weekdays: string[]): { date: string, dateString: string } => {
@@ -42,7 +43,6 @@ export default function DaysOfWeek({setNotes, setTotalPages, notebook}: DaysOfWe
 
         //temporary variable to hold the current day and the previous 7 days. Actual data will be reversed.
         let tempPreviousSevenDays: object[] = [];
-
         let currentDate: Date = new Date();
 
         // first grab the previous 6 days.
@@ -62,9 +62,14 @@ export default function DaysOfWeek({setNotes, setTotalPages, notebook}: DaysOfWe
     //reverse the previousSevenDays array so that the days are in the correct order.
     return (
         <div>
-            <h3 className={"days-of-week-header"}>Previous 7 Days</h3>
+            <h3 className={"days-of-week-header"}>Filter: Previous 7 Days</h3>
             <div className={"days-of-week-panel"}>
-                {previousSevenDays.map((day: object, item: number) => ( <button key={item} value={day.date} className={"panel-button"} onClick={handleDateSelected}>{day.dateString}</button>) )}
+                <p>Current Date Selected: {dateSelected}</p>
+                {previousSevenDays.map((day: object, item: number) => (
+                    <button key={item} value={day.date} className={"panel-button"}
+                            onClick={handleDateSelected}>{day.dateString}</button>))}
+                    <button key={7} value={""} className={"panel-button"}
+                        onClick={handleDateSelected}>Reset Date Filters</button>
             </div>
         </div>
     );

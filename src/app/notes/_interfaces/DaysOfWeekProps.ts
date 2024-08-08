@@ -1,6 +1,6 @@
 export interface DaysOfWeekProps {
-    setNotes: (notes: string[]) => void,
-    setTotalPages: (totalPages: number) => void,
-    page: number,
-    notebook: string,
+    dateSelected: string,
+    setDateSelected: (dateSelected: string) => void,
+    setUpperDateBound: (upperDateBound: string) => void,
+    setLowerDateBound: (lowerDateBound: string) => void,
 }

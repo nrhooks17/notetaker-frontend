@@ -34,10 +34,15 @@ export default function Notes(): JSX.Element {
     const [noteSubmitted, setNoteSubmitted] = useState<boolean>(false);
     const [notebookCreated, setNotebookCreated] = useState<boolean>(false);
 
+    // date filters
+    const [dateSelected, setDateSelected] = useState<string>("");
+    const [lowerDateBound, setLowerDateBound] = useState<string>("");
+    const [upperDateBound, setUpperDateBound] = useState<string>("");
+
     //function that will be called to fetch notes from the backend
-    const fetchNotes = useCallback(async (page: number = 1, notebook: string): Promise<void> => {
+    const fetchNotes = useCallback(async (page: number = 1, notebook: string, upperDateBound: string = "", lowerDateBound: string = ""): Promise<void> => {
         try {
-            let response: Response = await noteRepository.getAll(page, notebook);
+            let response: Response = await noteRepository.getAll(page, notebook, upperDateBound, lowerDateBound);
             let notesFromBackend: Note[] = response.notes;
             setNotes([...notesFromBackend])
             // need to have some sort of transformer on the backend
@@ -72,14 +77,14 @@ export default function Notes(): JSX.Element {
         }
     }, [noteSubmitted, fetchNotes]);
 
-    //useEffect that will be run when the component is mounted an when a page or a notebook changes.
+    // useEffect that will be run when the component is mounted, or when a page, notebook, upperDatebound or lowerDateBound changes.
     useEffect( () => {
         try {
-            fetchNotes(page, notebook)
+            fetchNotes(page, notebook, upperDateBound, lowerDateBound)
         } catch (e) {
             console.error('Error fetching notes: ', e)
         }
-    }, [page, notebook])
+    }, [page, notebook, upperDateBound, lowerDateBound])
 
     //useEffect that will be run when a selected notebook changes.
     useEffect(() => {
@@ -110,9 +115,12 @@ export default function Notes(): JSX.Element {
     }, [])
 
     const handleNotebookChanged = useCallback((notebook: string): void => {
-        setNotebook(notebook)
         // everytime a notebook is changed, need to go back to the first page.
+        setNotebook(notebook)
         setPage(1)
+        setDateSelected("")
+        setUpperDateBound("")
+        setLowerDateBound("")
     }, [notebook])
 
 
@@ -129,20 +137,18 @@ export default function Notes(): JSX.Element {
 
     return (
         <div className={'container'}>
-
             <header className={'flow note-header'}>
                 <h1>Note Taker</h1>
                 <p><strong>Current Notebook:</strong> {notebook}</p>
             </header>
             <NoteInput page={page} notebook={notebook} onAddNote={addNote} handleNoteSubmitted={handleNoteSubmitted}></NoteInput>
-
             <NotePaginationContext.Provider value={notePaginationProps}>
                 <NoteList notes={notes}></NoteList>
             </NotePaginationContext.Provider>
             <NotebookCreate setNotebook={setNotebook} setNotebookCreated={setNotebookCreated}></NotebookCreate>
             <NotebookSelect handleNotebookChanged={handleNotebookChanged} notebooks={notebooks} notebook={notebook}></NotebookSelect>
             <CurrentDate></CurrentDate>
-            <DaysOfWeek setNotes={setNotes} setTotalPages={setTotalPages} page={page} notebook={notebook}></DaysOfWeek>
+            <DaysOfWeek dateSelected={dateSelected} setDateSelected={setDateSelected} setUpperDateBound={setUpperDateBound} setLowerDateBound={setLowerDateBound}></DaysOfWeek>
         </div>
     );
 }
