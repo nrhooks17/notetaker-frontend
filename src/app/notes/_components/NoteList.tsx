@@ -1,22 +1,39 @@
-import {Note} from "@/app/notes/_interfaces/Note";
+import { Note } from "@/app/notes/_interfaces/Note";
 import { NoteListProps } from "@/app/notes/_interfaces/NoteListProps";
 import NotePagination from "@/app/notes/_components/NotePagination";
-export default function NoteList({notes  }: NoteListProps): JSX.Element {
-    return (
+import { ReactElement } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+
+export default function NoteList({notes, notesLoading}: NoteListProps): ReactElement {
+
+    function getElement(): ReactElement {
+        if (notes && notes.length > 0) {
+            return <>
+                <ul className={'note-list-text'}>
+                    {//need these brackets to write javascript in html
+                        notes.map(function (note: Note, index: number) {//this is for type declarations in typescript.
+                            return (//need these parenthesis to return JSX.
+                                <li key={index}>{note.text}</li>
+                            )
+                        })
+                    }
+                </ul>
+                <NotePagination></NotePagination>
+            </>
+        } else {
+           return <p>No notes found.</p>
+        }
+    }
+
+    return(
         <div className={'flow note-list note-list-container'}>
-            {/*<NotePagination></NotePagination>*/}
-            <ul className={'note-list-text'}>
-                {//need these brackets to write javascript in html
-                    notes.map(function(note: Note, index: number){//this is for type declarations in typescript.
-                        return (//need these parenthesis to return JSX.
-                            <li key={index}>{note.text}</li>
-                        )
-                    })
-                }
-            </ul>
-            <NotePagination></NotePagination>
+            {notesLoading ?
+                <FontAwesomeIcon icon={faSpinner} spin></FontAwesomeIcon> :
+                getElement() }
         </div>
     );
+
 }
 
 

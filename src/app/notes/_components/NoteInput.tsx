@@ -5,14 +5,15 @@ import {
 } from 'react';
 import { NoteInputProps } from "@/app/notes/_interfaces/NoteInputProps";
 import { NoteProvider } from "@/app/notes/_repositories/NoteProvider";
+import { ReactElement } from "react";
 
-export default function NoteInput({page, notebook, onAddNote, handleNoteSubmitted}: NoteInputProps): JSX.Element {
+export default function NoteInput({page, notebook, handleNoteSubmitted}: NoteInputProps): ReactElement {
 
     //this handleSubmit function is the function that runs the onAddNote function when the submit button is pressed.
     const [noteContent, setNoteContent] = useState<string>("");
     const [isLoading, setLoading] = useState<boolean>(true);
 
-    const submitNoteAction = async (event: FormEvent<HTMLFormElement> | KeyboardEvent) => {
+const submitNoteAction = async (event: FormEvent<HTMLFormElement> | KeyboardEvent): Promise<void> => {
         event.preventDefault();
 
         let noteRepository: NoteProvider = new NoteProvider();
@@ -21,9 +22,7 @@ export default function NoteInput({page, notebook, onAddNote, handleNoteSubmitte
          run some ajax code to call the notetaker api.
          then when the api returns, clear the noteContent
          */
-        if( noteContent !== undefined && noteContent !== "") {
-            onAddNote({text: noteContent});
-
+        if( noteContent != undefined && noteContent !== "") {
             try {
                  await noteRepository.post({ "text": noteContent, "page": page, "notebook": notebook});
             } catch (error) {
@@ -51,7 +50,7 @@ export default function NoteInput({page, notebook, onAddNote, handleNoteSubmitte
     }
 
     //this handles setting the value of noteContent when the user is typing.
-    const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>): void => {
         setNoteContent(event.target.value);
     }
 

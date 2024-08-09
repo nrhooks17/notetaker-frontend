@@ -1,11 +1,11 @@
 import  { format }  from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import moment from 'moment-timezone';
-import { useState, useEffect, MouseEventHandler, MouseEvent } from 'react';
-import { NoteProvider } from "@/app/notes/_repositories/NoteProvider";
+import { ReactElement, useState, useEffect, MouseEventHandler, MouseEvent } from 'react';
 import { DaysOfWeekProps } from "@/app/notes/_interfaces/DaysOfWeekProps";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
-export default function DaysOfWeek({ dateSelected, setDateSelected, setUpperDateBound, setLowerDateBound }: DaysOfWeekProps): JSX.Element  {
+export default function DaysOfWeek({ dateSelected, setDateSelected, setUpperDateBound, setLowerDateBound }: DaysOfWeekProps): ReactElement  {
     //need days just for this component. If this is used in others, then move to a constants file.
     const [previousSevenDays, setPreviousSevenDays] = useState<Array<Object>>([]);
     const dateFormat: string = 'yyyy-MM-dd HH:mm:ss'
@@ -59,18 +59,25 @@ export default function DaysOfWeek({ dateSelected, setDateSelected, setUpperDate
         setPreviousSevenDays(tempPreviousSevenDays);
     }, [])
 
-    //reverse the previousSevenDays array so that the days are in the correct order.
+    function getDaysOfWeek() {
+        return previousSevenDays < 2 ?
+            <FontAwesomeIcon icon={ faSpinner } spin={true}></FontAwesomeIcon> :
+            <div className={"days-of-week-panel"}>
+            <p>Current Date Selected: {dateSelected}</p>
+            {previousSevenDays.map((day: object, item: number) => (
+                <button key={item} value={day.date} className={"panel-button"}
+                        onClick={handleDateSelected}>{day.dateString}</button>))}
+            <button key={7} value={""} className={"panel-button"}
+                    onClick={handleDateSelected}>Reset Date Filters
+            </button>
+        </div>;
+    }
+
+//reverse the previousSevenDays array so that the days are in the correct order.
     return (
         <div>
             <h3 className={"days-of-week-header"}>Filter: Previous 7 Days</h3>
-            <div className={"days-of-week-panel"}>
-                <p>Current Date Selected: {dateSelected}</p>
-                {previousSevenDays.map((day: object, item: number) => (
-                    <button key={item} value={day.date} className={"panel-button"}
-                            onClick={handleDateSelected}>{day.dateString}</button>))}
-                    <button key={7} value={""} className={"panel-button"}
-                        onClick={handleDateSelected}>Reset Date Filters</button>
-            </div>
+            {getDaysOfWeek()}
         </div>
     );
 }

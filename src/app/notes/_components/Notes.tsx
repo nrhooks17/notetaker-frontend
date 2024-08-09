@@ -1,11 +1,11 @@
 'use client';
 
-import React, {useCallback} from 'react';
+import React, { useCallback, ReactElement } from 'react';
 import { useEffect, useState, useRef } from "react";
 import NoteInput from "@/app/notes/_components/NoteInput";
 import NoteList from "@/app/notes/_components/NoteList";
 import NotebookSelect from "@/app/notes/_components/NotebookSelect";
-import {Note} from "@/app/notes/_interfaces/Note";
+import { Note } from "@/app/notes/_interfaces/Note";
 import DaysOfWeek from "@/app/notes/_components/DaysOfWeek";
 import CurrentDate from "@/app/notes/_components/CurrentDate";
 import NotebookCreate from "@/app/notes/_components/NotebookCreate";
@@ -13,15 +13,25 @@ import { NoteProvider } from "@/app/notes/_repositories/NoteProvider";
 import { NotebookProvider } from "@/app/notes/_repositories/NotebookProvider";
 import { NotePaginationContext } from "@/app/notes/_components/_contexts/NotePaginationContext";
 import { NotePaginationContextType } from "@/app/notes/_interfaces/NotePaginationContextType";
+import {NoteSearch} from "@/app/notes/_components/NoteSearch";
 
-export default function Notes(): JSX.Element {
+/**
+ * The Notes component. This is the main component of this application. Where most if not all the logic will be.
+ *  I need to move some of this code to other files.
+ * @constructor
+ */
+export default function Notes(): ReactElement {
+
     //object with all my ajax calls
     let noteRepository: NoteProvider = useRef(new NoteProvider()).current;
     let notebookRepository: NotebookProvider = useRef(new NotebookProvider()).current;
 
     //state for notes
     const [notes, setNotes] = useState<Note[]>([]);
+    const [notesLoading, setNotesLoading] = useState<boolean>(false);
+
     const [notebooks, setNotebooks] = useState<string[]>([]);
+    const [notebooksLoading, setNotebooksLoading] = useState<boolean>(false);
 
     // Later, I need to add some sort of account functionality that will allow me to set the notebook to the user's default notebook.
     // this needs to be in the parent because it is use by both the NotebookCreate component and the NotebookSelect component.
@@ -42,14 +52,16 @@ export default function Notes(): JSX.Element {
     //function that will be called to fetch notes from the backend
     const fetchNotes = useCallback(async (page: number = 1, notebook: string, upperDateBound: string = "", lowerDateBound: string = ""): Promise<void> => {
         try {
+            setNotesLoading(true)
             let response: Response = await noteRepository.getAll(page, notebook, upperDateBound, lowerDateBound);
             let notesFromBackend: Note[] = response.notes;
             setNotes([...notesFromBackend])
             // need to have some sort of transformer on the backend
             setTotalPages(response.total_pages)
-        } catch(e)
-        {
+        } catch(e) {
             console.error('Error fetching notes: ', e);
+        } finally {
+            setNotesLoading(false)
         }
     }, [page])
 
@@ -57,6 +69,7 @@ export default function Notes(): JSX.Element {
     const fetchNotebooks = useCallback(async (): Promise<void> => {
         try{
             // fetch notebooks
+            setNotebooksLoading(true)
             const response = await notebookRepository.getAll(page, notebook)
 
             // set notebooks
@@ -64,6 +77,8 @@ export default function Notes(): JSX.Element {
 
         }catch (e){
             console.error('Error fetching notebook data: ', e);
+        }finally {
+            setNotebooksLoading(false)
         }
     }, [])
 
@@ -112,22 +127,23 @@ export default function Notes(): JSX.Element {
     when a new note is submitted.*/
     const handleNoteSubmitted = useCallback((): void => {
         setNoteSubmitted(true)
+        resetNotebook()
     }, [])
 
     const handleNotebookChanged = useCallback((notebook: string): void => {
         // everytime a notebook is changed, need to go back to the first page.
         setNotebook(notebook)
+        resetNotebook()
+    }, [notebook])
+
+
+    // resets the pages, and date filters
+    const resetNotebook  = (): void => {
         setPage(1)
         setDateSelected("")
         setUpperDateBound("")
         setLowerDateBound("")
-    }, [notebook])
-
-
-    // Adds a note to the list after it has been submitted.
-    const addNote = useCallback((newNote: Note): void => {
-        setNotes((prevNotes) => [...prevNotes, newNote]);
-    }, [])
+    }
 
     const notePaginationProps: NotePaginationContextType = {
         page: page,
@@ -139,16 +155,19 @@ export default function Notes(): JSX.Element {
         <div className={'container'}>
             <header className={'flow note-header'}>
                 <h1>Note Taker</h1>
-                <p><strong>Current Notebook:</strong> {notebook}</p>
+                <span>Current Notebook: {notebook}</span>
             </header>
-            <NoteInput page={page} notebook={notebook} onAddNote={addNote} handleNoteSubmitted={handleNoteSubmitted}></NoteInput>
+            <NoteInput page={page} notebook={notebook} handleNoteSubmitted={handleNoteSubmitted}></NoteInput>
             <NotePaginationContext.Provider value={notePaginationProps}>
-                <NoteList notes={notes}></NoteList>
+                <NoteList notes={notes} notesLoading={notesLoading}></NoteList>
             </NotePaginationContext.Provider>
-            <NotebookCreate setNotebook={setNotebook} setNotebookCreated={setNotebookCreated}></NotebookCreate>
-            <NotebookSelect handleNotebookChanged={handleNotebookChanged} notebooks={notebooks} notebook={notebook}></NotebookSelect>
+            <NotebookCreate setNotebook={setNotebook} setNotebookCreated={setNotebookCreated} notebooksLoading={notebooksLoading}></NotebookCreate>
+            <NotebookSelect handleNotebookChanged={handleNotebookChanged} notebooks={notebooks}
+                            notebook={notebook} notebooksLoading={notebooksLoading}></NotebookSelect>
             <CurrentDate></CurrentDate>
-            <DaysOfWeek dateSelected={dateSelected} setDateSelected={setDateSelected} setUpperDateBound={setUpperDateBound} setLowerDateBound={setLowerDateBound}></DaysOfWeek>
+            <DaysOfWeek dateSelected={dateSelected} setDateSelected={setDateSelected}
+                        setUpperDateBound={setUpperDateBound} setLowerDateBound={setLowerDateBound}></DaysOfWeek>
+            <NoteSearch></NoteSearch>
         </div>
     );
 }

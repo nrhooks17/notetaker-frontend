@@ -1,6 +1,6 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState, ReactElement } from "react";
 
-export default function CurrentDate(): JSX.Element {
+export default function CurrentDate(): ReactElement {
 
     const [currentDate, setCurrentDate] = useState<string>("");
 

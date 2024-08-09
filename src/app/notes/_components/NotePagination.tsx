@@ -1,24 +1,28 @@
-import {MouseEventHandler, useState, useEffect, useContext, MouseEvent} from "react";
-import {NotePaginationContext} from "@/app/notes/_components/_contexts/NotePaginationContext";
-import {NotePaginationContextType} from "@/app/notes/_interfaces/NotePaginationContextType";
-export default function NotePagination(){
+import { MouseEventHandler, useState, useEffect, useContext, MouseEvent, ReactElement } from "react";
+import { NotePaginationContext } from "@/app/notes/_components/_contexts/NotePaginationContext";
+import { NotePaginationContextType } from "@/app/notes/_interfaces/NotePaginationContextType";
+export default function NotePagination(): ReactElement{
 
     const notePaginationProps: NotePaginationContextType = useContext(NotePaginationContext)
     const { page , totalPages, setPage} = notePaginationProps;
     const [pageButtons, setPageButtons] = useState<any[]>([]);
 
-    const changePage: MouseEventHandler = (event: MouseEvent<HTMLButtonElement>) => {
+    const changePage: MouseEventHandler = (event: MouseEvent<HTMLButtonElement>): void => {
         let newPage: number = parseInt(event.currentTarget.value);
         setPage(newPage);
     }
 
-    const createPageButtons = () => {
+    const createPageButtons = (): void => {
         setPageButtons([]);
-        console.log(totalPages)
         let buttons: any[]  = []
         for (let i: number = 0; i  < totalPages; i++){
             let pageNumber: number = i + 1;
-            let pageButton: JSX.Element = <button className={"page-button"} key={i} onClick={changePage} value={pageNumber}>{pageNumber}</button>
+            let pageButton: JSX.Element = <button
+                key={i}
+                onClick={changePage}
+                value={pageNumber}
+                className={`pagination-button ${ i === (page - 1) ? 'active' : ''}`}
+            >{pageNumber}</button>
             buttons.push(pageButton);
         }
         setPageButtons(buttons)
@@ -26,7 +30,7 @@ export default function NotePagination(){
 
     useEffect(() => {
         createPageButtons();
-    }, [totalPages])
+    }, [totalPages, page])
 
     return (
         <div className={'note-pagination'}>

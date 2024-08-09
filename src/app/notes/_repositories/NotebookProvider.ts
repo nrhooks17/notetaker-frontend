@@ -1,5 +1,8 @@
 import { Repository } from "@/app/_classes/Repository";
 
+/**
+ * The NotebookProvider class
+ */
 export class NotebookProvider extends Repository {
 
     constructor() {
@@ -8,6 +11,11 @@ export class NotebookProvider extends Repository {
         this.itemEndpoint = 'notebook';
     }
 
+    /**
+     * Fetches all notebooks from the Notetaker API
+      * @param page
+     * @param notebook
+     */
    public async getAll(page: number, notebook: string): Promise<Response> {
         try {
             const response: Response = await fetch(`${this.baseUrl}/notebooks?notebook=${notebook}`)
@@ -18,6 +26,10 @@ export class NotebookProvider extends Repository {
         }
     }
 
+    /**
+     * Posts a new notebook to the Notetaker API
+      * @param data
+     */
    public async post(data: object): Promise<Response> {
         try {
             const response: Response = await fetch(`${this.baseUrl}/notebook`, {

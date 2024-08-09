@@ -1,15 +1,18 @@
-import React, {useRef, useState} from "react";
+import React, { useRef, useState, ReactElement } from "react";
 import { NotebookProvider } from "@/app/notes/_repositories/NotebookProvider";
 import { NotebookCreateProps } from "../_interfaces/NotebookCreateProps";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * Component to create a new notebook
  *
  * @param setNotebook
  * @param setNotebookCreated
+ * @param notebooksLoading
  * @constructor
  */
-export default function NotebookCreate ({setNotebook, setNotebookCreated}: NotebookCreateProps): JSX.Element{
+export default function NotebookCreate ({setNotebook, setNotebookCreated, notebooksLoading}: NotebookCreateProps): ReactElement {
 
     // state for component
     const [newNotebook, setNewNotebook] = useState<string>("")
@@ -36,12 +39,20 @@ export default function NotebookCreate ({setNotebook, setNotebookCreated}: Noteb
         setNewNotebook(e.target.value)
     }
 
-    // jsx code
+    function getNotebookCreateForm() {
+        return notebooksLoading ?
+            <FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon> :
+            <>
+              <input type="text" placeholder="Notebook Name" onChange={handleNotebookInputChange} value={newNotebook}/>
+              <input type="submit" value={"Create"}/>
+            </>;
+    }
+
+// jsx code
     return (
         <form className={'notebook-create'} onSubmit={submitNotebook}>
             <h3>Create Notebook:</h3>
-            <input type="text" placeholder="Notebook Name" onChange={handleNotebookInputChange} value={newNotebook}/>
-            <input type="submit" value={"Create"}/>
+            {getNotebookCreateForm()}
         </form>
     )
 }
