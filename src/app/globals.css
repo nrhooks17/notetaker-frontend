@@ -256,3 +256,44 @@ h1 {
     border: 0;
     white-space: nowrap;
 }
+
+.create-notebook-input {
+    padding: 10px;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: Arial, SansSerif, serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    outline: none;
+    resize: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.create-notebook-input:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 12px rgba(0, 123, 255, 0.5);
+}
+
+.create-notebook-button {
+    margin-top: 10px;
+    height: 3em;
+    background-color: #007bff; /* Blue background */
+    color: white; /* White text */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Changes the cursor to a pointer */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    outline: none; /* Removes the default focus outline */
+}
+.create-notebook-button:hover {
+    background-color: #007bff;
+    border: 1px solid black;
+    color: white;
+}
+
+.create-notebook-button:active {
+    background-color: #0056b3; /* Darker blue on hover/focus */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Larger shadow on hover/focus for a "lifting" effect */
+}

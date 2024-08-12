@@ -43,8 +43,8 @@ export default function NotebookCreate ({setNotebook, setNotebookCreated, notebo
         return notebooksLoading ?
             <FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon> :
             <>
-              <input type="text" placeholder="Notebook Name" onChange={handleNotebookInputChange} value={newNotebook}/>
-              <input type="submit" value={"Create"}/>
+              <input type="text" placeholder="Notebook Name" onChange={handleNotebookInputChange} value={newNotebook} className={"create-notebook-input"}/>
+              <input type="submit" value={"Create"} className={"create-notebook-button"}/>
             </>;
     }
 

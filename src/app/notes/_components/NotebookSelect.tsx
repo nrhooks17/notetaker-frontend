@@ -14,7 +14,7 @@ export default function NotebookSelect({handleNotebookChanged, notebooks, notebo
     function getNotebookSelect() {
         return notebooksLoading ?
             <FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon> :
-            <select className={"notebook-select-element"} value={notebook} onChange={onNotebookSelect}>
+            <select className={"notebook-select"} value={notebook} onChange={onNotebookSelect}>
             {notebooks.map((notebook, index) => (
                 <option key={index} value={notebook}>
                     {notebook}
