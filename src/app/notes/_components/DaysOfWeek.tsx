@@ -67,7 +67,7 @@ export default function DaysOfWeek({ dateSelected, setDateSelected, setUpperDate
             {previousSevenDays.map((day: object, item: number) => (
                 <button key={item} value={day.date} className={"panel-button"}
                         onClick={handleDateSelected}>{day.dateString}</button>))}
-            <button key={7} value={""} className={"panel-button"}
+            <button key={7} value={""} className={"reset-filter-button"}
                     onClick={handleDateSelected}>Reset Date Filters
             </button>
         </div>;

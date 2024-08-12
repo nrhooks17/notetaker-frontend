@@ -13,6 +13,7 @@ h1 {
     grid-template-rows: 10vh 20vh 15vh 15% 19vh 1fr;
     grid-template-columns: 20% repeat(7, 1fr);
     grid-row-gap: 3em;
+    font-family: Arial, SansSerif, serif;
 }
 
 .note-input {
@@ -135,6 +136,17 @@ h1 {
     grid-row-end: 3;
 }
 
+.submit-button:hover {
+    background-color: #007bff;
+    border: 1px solid black;
+    color: white;
+}
+
+.submit-button:active {
+    background-color: #0056b3; /* Darker blue on hover/focus */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Larger shadow on hover/focus for a "lifting" effect */
+}
+
 .styled-button:hover, .styled-button:focus {
     background-color: #0056b3; /* Darker blue on hover/focus */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Larger shadow on hover/focus for a "lifting" effect */
@@ -159,9 +171,41 @@ h1 {
     padding: 10px;
     margin-bottom: 5px;
     border: none;
-    background-color: #ddd;
+    background-color: #007bff;
+    color: white;
     cursor: pointer;
     text-align: left;
+    border-radius: 5px;
+}
+
+.panel-button:hover {
+    background-color: #007bff;
+    border: 1px solid black;
+}
+
+.panel-button:active {
+    background-color: #0056b3;
+    border: 1px solid black;
+}
+
+.reset-filter-button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 5px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-align: left;
+}
+.reset-filter-button:hover {
+    background-color: #dc3545;
+    border: 1px solid black;
+}
+
+.reset-filter-button:active {
+    background-color: #c82333;
+    border: 1px solid black;
 }
 
 .date-header {
@@ -199,32 +243,6 @@ h1 {
 
 .search-input:focus {
     border-color: #4CAF50;
-}
-
-.search-button {
-    position: absolute;
-    right: 5px;
-    background: #4CAF50;
-    border: none;
-    cursor: pointer;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s;
-    padding: 0;
-}
-
-.search-button:hover {
-    background-color: #45a049;
-}
-
-.arrow-icon {
-    width: 18px;
-    height: 18px;
-    fill: white;
 }
 
 .visually-hidden {

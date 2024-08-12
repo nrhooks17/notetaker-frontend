@@ -38,7 +38,7 @@ const submitNoteAction = async (event: FormEvent<HTMLFormElement> | KeyboardEven
     };
 
     //this here basically calls the onAddNote function which adds a new note using the string from noteContent
-    const handleEnterPress = async (event ): Promise<void> => {
+    const handleEnterPress = async (event): Promise<void> => {
         if (event.key == 'Enter') {
             event.preventDefault();
             await submitNoteAction(event);

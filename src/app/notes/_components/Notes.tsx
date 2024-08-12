@@ -29,6 +29,7 @@ export default function Notes(): ReactElement {
     //state for notes
     const [notes, setNotes] = useState<Note[]>([]);
     const [notesLoading, setNotesLoading] = useState<boolean>(false);
+    const [noteSearchString, setNotesSearchString] = useState<string>("");
 
     const [notebooks, setNotebooks] = useState<string[]>([]);
     const [notebooksLoading, setNotebooksLoading] = useState<boolean>(false);
@@ -50,10 +51,10 @@ export default function Notes(): ReactElement {
     const [upperDateBound, setUpperDateBound] = useState<string>("");
 
     //function that will be called to fetch notes from the backend
-    const fetchNotes = useCallback(async (page: number = 1, notebook: string, upperDateBound: string = "", lowerDateBound: string = ""): Promise<void> => {
+    const fetchNotes = useCallback(async (page: number = 1, notebook: string, upperDateBound: string = "", lowerDateBound: string = "", noteSearchString: string = ""): Promise<void> => {
         try {
             setNotesLoading(true)
-            let response: Response = await noteRepository.getAll(page, notebook, upperDateBound, lowerDateBound);
+            let response: Response = await noteRepository.getAll(page, notebook, upperDateBound, lowerDateBound, noteSearchString);
             let notesFromBackend: Note[] = response.notes;
             setNotes([...notesFromBackend])
             // need to have some sort of transformer on the backend
@@ -95,11 +96,11 @@ export default function Notes(): ReactElement {
     // useEffect that will be run when the component is mounted, or when a page, notebook, upperDatebound or lowerDateBound changes.
     useEffect( () => {
         try {
-            fetchNotes(page, notebook, upperDateBound, lowerDateBound)
+            fetchNotes(page, notebook, upperDateBound, lowerDateBound, noteSearchString)
         } catch (e) {
             console.error('Error fetching notes: ', e)
         }
-    }, [page, notebook, upperDateBound, lowerDateBound])
+    }, [page, notebook, upperDateBound, lowerDateBound, noteSearchString])
 
     //useEffect that will be run when a selected notebook changes.
     useEffect(() => {
@@ -127,18 +128,18 @@ export default function Notes(): ReactElement {
     when a new note is submitted.*/
     const handleNoteSubmitted = useCallback((): void => {
         setNoteSubmitted(true)
-        resetNotebook()
+        resetNotebookFilters()
     }, [])
 
     const handleNotebookChanged = useCallback((notebook: string): void => {
         // everytime a notebook is changed, need to go back to the first page.
         setNotebook(notebook)
-        resetNotebook()
+        resetNotebookFilters()
     }, [notebook])
 
 
     // resets the pages, and date filters
-    const resetNotebook  = (): void => {
+    const resetNotebookFilters  = (): void => {
         setPage(1)
         setDateSelected("")
         setUpperDateBound("")
@@ -167,7 +168,7 @@ export default function Notes(): ReactElement {
             <CurrentDate></CurrentDate>
             <DaysOfWeek dateSelected={dateSelected} setDateSelected={setDateSelected}
                         setUpperDateBound={setUpperDateBound} setLowerDateBound={setLowerDateBound}></DaysOfWeek>
-            <NoteSearch></NoteSearch>
+            <NoteSearch setNotesSearchString={setNotesSearchString} setPage={setPage}></NoteSearch>
         </div>
     );
 }

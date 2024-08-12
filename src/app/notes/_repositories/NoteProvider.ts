@@ -31,10 +31,11 @@ export class NoteProvider extends Repository{
      * @param notebook
      * @param upperDateBound
      * @param lowerDateBound
+     * @param noteSearchString
      */
-  public async getAll(page: number = 1, notebook: string = "default", upperDateBound: string = "", lowerDateBound: string = ""): Promise<Response> {
+  public async getAll(page: number = 1, notebook: string = "default", upperDateBound: string = "", lowerDateBound: string = "", noteSearchString: string = ""): Promise<Response> {
       try {
-          const response: Response = await fetch(`${this.baseUrl}/${this.collectionEndpoint}?page=${page}&notebook=${notebook}&upperDateBound=${upperDateBound}&lowerDateBound=${lowerDateBound}`)
+          const response: Response = await fetch(`${this.baseUrl}/${this.collectionEndpoint}?page=${page}&notebook=${notebook}&upperDateBound=${upperDateBound}&lowerDateBound=${lowerDateBound}&noteSearchString=${noteSearchString}`)
 
           return await response.json()
       } catch (e){

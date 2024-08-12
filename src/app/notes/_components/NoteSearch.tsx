@@ -1,24 +1,30 @@
-import {FormEvent} from "react";
+import { BaseSyntheticEvent, FormEvent, ReactElement } from "react";
+import { NoteSearchProps } from "@/app/notes/_interfaces/NoteSearchProps";
 
-export function NoteSearch() {
+/**
+ * Component to search for notes
+ * @constructor
+ */
+export function NoteSearch({setNotesSearchString, setPage}: NoteSearchProps): ReactElement {
 
-    const handleSubmit = (event: FormEvent): void => {
+    // not sure of the type of event. I wish there was an InputEvent I could use. Maybe I should make one?
+    const handleInput = (event: BaseSyntheticEvent): void => {
+        setNotesSearchString(event.target.value);
+        setPage(1)
+    }
+
+    // prevents the form from submitting when enter is pressed or the user clicks the submit button.
+    const preventFormSubmission = (event: FormEvent): void => {
         event.preventDefault();
     }
 
     return (
-        <form className="search-form" role="search" onSubmit={handleSubmit}>
-            <label htmlFor="search" className="visually-hidden">Search</label>
+        <form className="search-form" role="search" onSubmit={preventFormSubmission}>
             <div className="search-wrapper">
-                <input type="search" id="search" name="search" className="search-input" placeholder="Search..."/>
-                <button type="submit" className="search-button" aria-label="Submit search">
-                    <svg className="arrow-icon" viewBox="0 0 24 24">
-                        <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/>
-                    </svg>
-                </button>
+                <input type="search" id="search" name="search" className="search-input" onInput={handleInput} placeholder="Search Notes..."/>
             </div>
-        </form>)
-        ;
+        </form>
+    );
 
 
 }
