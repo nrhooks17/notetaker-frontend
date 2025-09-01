@@ -1,8 +1,7 @@
 import React, { useRef, useState, ReactElement } from "react";
 import { NotebookProvider } from "@/app/notes/_repositories/NotebookProvider";
 import { NotebookCreateProps } from "../_interfaces/NotebookCreateProps";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner";
 
 /**
  * Component to create a new notebook
@@ -41,7 +40,7 @@ export default function NotebookCreate ({setNotebook, setNotebookCreated, notebo
 
     function getNotebookCreateForm() {
         return notebooksLoading ?
-            <FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon> :
+            <CyberpunkSpinner /> :
             <>
               <input type="text" placeholder="Notebook Name" onChange={handleNotebookInputChange} value={newNotebook} className={"create-notebook-input"}/>
               <input type="submit" value={"Create"} className={"create-notebook-button"}/>
@@ -51,7 +50,7 @@ export default function NotebookCreate ({setNotebook, setNotebookCreated, notebo
 // jsx code
     return (
         <form className={'notebook-create'} onSubmit={submitNotebook}>
-            <h3>Create Notebook:</h3>
+            <h3 className={"notebook-section-title"}>Create Notebook:</h3>
             {getNotebookCreateForm()}
         </form>
     )

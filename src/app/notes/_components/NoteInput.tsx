@@ -11,7 +11,7 @@ export default function NoteInput({page, notebook, handleNoteSubmitted}: NoteInp
 
     //this handleSubmit function is the function that runs the onAddNote function when the submit button is pressed.
     const [noteContent, setNoteContent] = useState<string>("");
-    const [isLoading, setLoading] = useState<boolean>(true);
+    const [isLoading, setLoading] = useState<boolean>(false);
 
 const submitNoteAction = async (event: FormEvent<HTMLFormElement> | KeyboardEvent): Promise<void> => {
         event.preventDefault();
@@ -24,17 +24,18 @@ const submitNoteAction = async (event: FormEvent<HTMLFormElement> | KeyboardEven
          */
         if( noteContent != undefined && noteContent !== "") {
             try {
-                 await noteRepository.post({ "text": noteContent, "page": page, "notebook": notebook});
+                setLoading(true);
+                await noteRepository.post({ "text": noteContent, "page": page, "notebook": notebook});
+                handleNoteSubmitted(); //tell the parent that a note has been submitted, so it can reload the notes.
+                // reset the textbox with an empty string to clear it out async.
+                setNoteContent("");
             } catch (error) {
                 console.error("Something went wrong with submitting the note: " + noteContent + " to the api.");
                 console.error(error);
+            } finally {
+                setLoading(false);
             }
-
-            handleNoteSubmitted(); //tell the parent that a note has been submitted, so it can reload the notes.
         }
-
-        // reset the textbox with an empty string to clear it out async.
-        setNoteContent("");
     };
 
     //this here basically calls the onAddNote function which adds a new note using the string from noteContent
@@ -57,8 +58,16 @@ const submitNoteAction = async (event: FormEvent<HTMLFormElement> | KeyboardEven
     //binds all the js variables to their attributes and returns the React component in JSX.
     return (
         <form onSubmit={handleSubmit} onKeyDown={handleEnterPress} className={'flow note-input'}>
-          <textarea id="notes" className={'flow styled-textarea'} value={noteContent} onChange={handleInputChange}/>
-          <button className={'flow submit-button'}>Submit Note</button>
+          <textarea 
+            id="notes" 
+            className={'flow styled-textarea'} 
+            value={noteContent} 
+            onChange={handleInputChange}
+            disabled={isLoading}
+          />
+          <button className={'flow submit-button'} disabled={isLoading}>
+            {isLoading ? 'SUBMITTING...' : 'Submit Note'}
+          </button>
         </form>
     );
 }

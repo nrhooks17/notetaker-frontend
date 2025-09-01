@@ -2,12 +2,12 @@ import  { format }  from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { ReactElement, useState, useEffect, MouseEventHandler, MouseEvent } from 'react';
 import { DaysOfWeekProps } from "@/app/notes/_interfaces/DaysOfWeekProps";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner";
 
 export default function DaysOfWeek({ dateSelected, setDateSelected, setUpperDateBound, setLowerDateBound }: DaysOfWeekProps): ReactElement  {
     //need days just for this component. If this is used in others, then move to a constants file.
     const [previousSevenDays, setPreviousSevenDays] = useState<Array<Object>>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const dateFormat: string = 'yyyy-MM-dd HH:mm:ss'
 
     // grabs notes based off of the date selected.
@@ -50,21 +50,22 @@ export default function DaysOfWeek({ dateSelected, setDateSelected, setUpperDate
             let previousDay: Date = new Date(currentDate.getTime() - (i * 24 * 60 * 60 * 1000));
             let dateStrings: {date: string, dateString: string} = formatDate(previousDay, weekdays);
             tempPreviousSevenDays.push(dateStrings);
-            setPreviousSevenDays(tempPreviousSevenDays);
         }
 
         // then format the current date.
         let formattedDateObject: { date: string, dateString: string } = formatDate(currentDate, weekdays);
         tempPreviousSevenDays.push(formattedDateObject);
+        
         setPreviousSevenDays(tempPreviousSevenDays);
+        setIsLoading(false);
     }, [])
 
     function getDaysOfWeek() {
-        return previousSevenDays < 2 ?
-            <FontAwesomeIcon icon={ faSpinner } spin={true}></FontAwesomeIcon> :
+        return isLoading ?
+            <CyberpunkSpinner /> :
             <div className={"days-of-week-panel"}>
             <p>Current Date Selected: {dateSelected}</p>
-            {previousSevenDays.map((day: object, item: number) => (
+            {previousSevenDays.map((day: any, item: number) => (
                 <button key={item} value={day.date} className={"panel-button"}
                         onClick={handleDateSelected}>{day.dateString}</button>))}
             <button key={7} value={""} className={"reset-filter-button"}

@@ -1,7 +1,6 @@
 import { FormEvent, ReactElement } from "react"
 import { NotebookSelectProps } from "@/app/notes/_interfaces/NotebookSelectProps";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner";
 
 export default function NotebookSelect({handleNotebookChanged, notebooks, notebook, notebooksLoading}: NotebookSelectProps): ReactElement {
 
@@ -13,7 +12,7 @@ export default function NotebookSelect({handleNotebookChanged, notebooks, notebo
 
     function getNotebookSelect() {
         return notebooksLoading ?
-            <FontAwesomeIcon icon={faSpinner}></FontAwesomeIcon> :
+            <CyberpunkSpinner /> :
             <select className={"notebook-dropdown"} value={notebook} onChange={onNotebookSelect}>
             {notebooks.map((notebook, index) => (
                 <option key={index} value={notebook}>
@@ -26,7 +25,7 @@ export default function NotebookSelect({handleNotebookChanged, notebooks, notebo
     return (
         <>
             <div className={"notebook-select"}>
-                <h3 className={"notebook-select-title"}>Select Notebook:</h3>
+                <h3 className={"notebook-section-title"}>Select Notebook:</h3>
                 {getNotebookSelect()}
             </div>
         </>

@@ -1,9 +1,8 @@
 import { Note } from "@/app/notes/_interfaces/Note";
 import { NoteListProps } from "@/app/notes/_interfaces/NoteListProps";
 import NotePagination from "@/app/notes/_components/NotePagination";
+import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner";
 import { ReactElement } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 export default function NoteList({notes, notesLoading}: NoteListProps): ReactElement {
 
@@ -29,7 +28,7 @@ export default function NoteList({notes, notesLoading}: NoteListProps): ReactEle
     return(
         <div className={'flow note-list note-list-container'}>
             {notesLoading ?
-                <FontAwesomeIcon icon={faSpinner} spin></FontAwesomeIcon> :
+                <CyberpunkSpinner /> :
                 getElement() }
         </div>
     );
