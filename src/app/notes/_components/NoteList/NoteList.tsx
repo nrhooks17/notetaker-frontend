@@ -1,22 +1,21 @@
 import { Note } from "@/app/notes/_interfaces/Note";
 import { NoteListProps } from "@/app/notes/_interfaces/NoteListProps";
 import NotePagination from "@/app/notes/_components/NotePagination";
-import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner";
+import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner/CyberpunkSpinner";
 import { ReactElement } from "react";
+import styles from './NoteList.module.css';
 
 export default function NoteList({notes, notesLoading}: NoteListProps): ReactElement {
 
     function getElement(): ReactElement {
         if (notes && notes.length > 0) {
             return <>
-                <ul className={'note-list-text'}>
-                    {//need these brackets to write javascript in html
-                        notes.map(function (note: Note, index: number) {//this is for type declarations in typescript.
-                            return (//need these parenthesis to return JSX.
-                                <li key={index}>{note.text}</li>
-                            )
-                        })
-                    }
+                <ul className={styles.noteListText}>
+                    {notes.map(function (note: Note, index: number) {
+                        return (
+                            <li key={index}>{note.text}</li>
+                        )
+                    })}
                 </ul>
                 <NotePagination></NotePagination>
             </>
@@ -26,13 +25,10 @@ export default function NoteList({notes, notesLoading}: NoteListProps): ReactEle
     }
 
     return(
-        <div className={'flow note-list note-list-container'}>
+        <div className={`flow ${styles.noteListContainer}`}>
             {notesLoading ?
                 <CyberpunkSpinner /> :
                 getElement() }
         </div>
     );
-
 }
-
-

@@ -1,4 +1,5 @@
 import { useEffect, useState, ReactElement } from "react";
+import styles from './CurrentDate.module.css';
 
 export default function CurrentDate(): ReactElement {
 
@@ -12,7 +13,7 @@ export default function CurrentDate(): ReactElement {
 
     try {
         return (
-            <h1 className={"date-header"}>{ currentDate }</h1>
+            <h1 className={styles.dateHeader}>{ currentDate }</h1>
         );
     }
     catch (error) {

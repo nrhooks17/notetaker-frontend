@@ -2,18 +2,19 @@
 
 import React, { useCallback, ReactElement } from 'react';
 import { useEffect, useState, useRef } from "react";
-import NoteInput from "@/app/notes/_components/NoteInput";
-import NoteList from "@/app/notes/_components/NoteList";
-import NotebookSelect from "@/app/notes/_components/NotebookSelect";
+import NoteInput from "@/app/notes/_components/NoteInput/NoteInput";
+import NoteList from "@/app/notes/_components/NoteList/NoteList";
+import NotebookSelect from "@/app/notes/_components/NotebookSelect/NotebookSelect";
 import { Note } from "@/app/notes/_interfaces/Note";
-import DaysOfWeek from "@/app/notes/_components/DaysOfWeek";
+import DaysOfWeek from "@/app/notes/_components/DaysOfWeek/DaysOfWeek";
 import CurrentDate from "@/app/notes/_components/CurrentDate";
-import NotebookCreate from "@/app/notes/_components/NotebookCreate";
+import NotebookCreate from "@/app/notes/_components/NotebookCreate/NotebookCreate";
 import { NoteProvider } from "@/app/notes/_repositories/NoteProvider";
 import { NotebookProvider } from "@/app/notes/_repositories/NotebookProvider";
 import { NotePaginationContext } from "@/app/notes/_components/_contexts/NotePaginationContext";
 import { NotePaginationContextType } from "@/app/notes/_interfaces/NotePaginationContextType";
 import {NoteSearch} from "@/app/notes/_components/NoteSearch";
+import styles from './Notes.module.css';
 
 /**
  * The Notes component. This is the main component of this application. Where most if not all the logic will be.
@@ -153,39 +154,39 @@ export default function Notes(): ReactElement {
     }
 
     return (
-        <div className={'container'}>
-            <header className={'note-header'}>
+        <div className={styles.container}>
+            <header className={styles.noteHeader}>
                 <h1>// Note Taker</h1>
                 <span>Active Notebook: {notebook || 'None Selected'}</span>
             </header>
 
-            <aside className={'sidebar-nav'}>
+            <aside className={styles.sidebarNav}>
                 <DaysOfWeek dateSelected={dateSelected} setDateSelected={setDateSelected}
                             setUpperDateBound={setUpperDateBound} setLowerDateBound={setLowerDateBound}></DaysOfWeek>
             </aside>
 
-            <main className={'main-content'}>
-                <section className={'input-section'}>
+            <main className={styles.mainContent}>
+                <section className={styles.inputSection}>
                     <NoteInput page={page} notebook={notebook} handleNoteSubmitted={handleNoteSubmitted}></NoteInput>
                 </section>
                 
-                <section className={'notes-section'}>
+                <section className={styles.notesSection}>
                     <NotePaginationContext.Provider value={notePaginationProps}>
                         <NoteList notes={notes} notesLoading={notesLoading}></NoteList>
                     </NotePaginationContext.Provider>
                 </section>
 
-                <section className={'search-section'}>
+                <section className={styles.searchSection}>
                     <NoteSearch setNotesSearchString={setNotesSearchString} setPage={setPage}></NoteSearch>
                 </section>
             </main>
 
-            <aside className={'right-panel'}>
-                <div className={'date-display'}>
+            <aside className={styles.rightPanel}>
+                <div className={styles.dateDisplay}>
                     <CurrentDate></CurrentDate>
                 </div>
                 
-                <div className={'notebook-controls'}>
+                <div className={styles.notebookControls}>
                     <NotebookCreate setNotebook={setNotebook} setNotebookCreated={setNotebookCreated} notebooksLoading={notebooksLoading}></NotebookCreate>
                     <NotebookSelect handleNotebookChanged={handleNotebookChanged} notebooks={notebooks}
                                     notebook={notebook} notebooksLoading={notebooksLoading}></NotebookSelect>

@@ -1,6 +1,7 @@
 import { FormEvent, ReactElement } from "react"
 import { NotebookSelectProps } from "@/app/notes/_interfaces/NotebookSelectProps";
-import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner";
+import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner/CyberpunkSpinner";
+import styles from './NotebookSelect.module.css';
 
 export default function NotebookSelect({handleNotebookChanged, notebooks, notebook, notebooksLoading}: NotebookSelectProps): ReactElement {
 
@@ -13,7 +14,7 @@ export default function NotebookSelect({handleNotebookChanged, notebooks, notebo
     function getNotebookSelect() {
         return notebooksLoading ?
             <CyberpunkSpinner /> :
-            <select className={"notebook-dropdown"} value={notebook} onChange={onNotebookSelect}>
+            <select className={styles.dropdown} value={notebook} onChange={onNotebookSelect}>
             {notebooks.map((notebook, index) => (
                 <option key={index} value={notebook}>
                     {notebook}
@@ -24,8 +25,8 @@ export default function NotebookSelect({handleNotebookChanged, notebooks, notebo
 
     return (
         <>
-            <div className={"notebook-select"}>
-                <h3 className={"notebook-section-title"}>Select Notebook:</h3>
+            <div className={styles.notebookSelect}>
+                <h3 className={styles.sectionTitle}>Select Notebook:</h3>
                 {getNotebookSelect()}
             </div>
         </>

@@ -6,28 +6,22 @@ import {
 import { NoteInputProps } from "@/app/notes/_interfaces/NoteInputProps";
 import { NoteProvider } from "@/app/notes/_repositories/NoteProvider";
 import { ReactElement } from "react";
+import styles from './NoteInput.module.css';
 
 export default function NoteInput({page, notebook, handleNoteSubmitted}: NoteInputProps): ReactElement {
-
-    //this handleSubmit function is the function that runs the onAddNote function when the submit button is pressed.
     const [noteContent, setNoteContent] = useState<string>("");
     const [isLoading, setLoading] = useState<boolean>(false);
 
-const submitNoteAction = async (event: FormEvent<HTMLFormElement> | KeyboardEvent): Promise<void> => {
+    const submitNoteAction = async (event: FormEvent<HTMLFormElement> | KeyboardEvent): Promise<void> => {
         event.preventDefault();
 
         let noteRepository: NoteProvider = new NoteProvider();
 
-        /*
-         run some ajax code to call the notetaker api.
-         then when the api returns, clear the noteContent
-         */
         if( noteContent != undefined && noteContent !== "") {
             try {
                 setLoading(true);
                 await noteRepository.post({ "text": noteContent, "page": page, "notebook": notebook});
-                handleNoteSubmitted(); //tell the parent that a note has been submitted, so it can reload the notes.
-                // reset the textbox with an empty string to clear it out async.
+                handleNoteSubmitted();
                 setNoteContent("");
             } catch (error) {
                 console.error("Something went wrong with submitting the note: " + noteContent + " to the api.");
@@ -38,7 +32,6 @@ const submitNoteAction = async (event: FormEvent<HTMLFormElement> | KeyboardEven
         }
     };
 
-    //this here basically calls the onAddNote function which adds a new note using the string from noteContent
     const handleEnterPress = async (event): Promise<void> => {
         if (event.key == 'Enter') {
             event.preventDefault();
@@ -50,22 +43,21 @@ const submitNoteAction = async (event: FormEvent<HTMLFormElement> | KeyboardEven
         await submitNoteAction(event);
     }
 
-    //this handles setting the value of noteContent when the user is typing.
     const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>): void => {
         setNoteContent(event.target.value);
     }
 
-    //binds all the js variables to their attributes and returns the React component in JSX.
     return (
-        <form onSubmit={handleSubmit} onKeyDown={handleEnterPress} className={'flow note-input'}>
+        <form onSubmit={handleSubmit} onKeyDown={handleEnterPress} className={`flow ${styles.noteInput}`}>
           <textarea 
             id="notes" 
-            className={'flow styled-textarea'} 
+            className={`flow ${styles.textarea}`} 
             value={noteContent} 
             onChange={handleInputChange}
             disabled={isLoading}
+            placeholder="Enter your note here..."
           />
-          <button className={'flow submit-button'} disabled={isLoading}>
+          <button className={`flow ${styles.submitButton}`} disabled={isLoading}>
             {isLoading ? 'SUBMITTING...' : 'Submit Note'}
           </button>
         </form>

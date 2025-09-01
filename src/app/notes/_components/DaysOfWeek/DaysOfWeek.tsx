@@ -2,7 +2,8 @@ import  { format }  from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { ReactElement, useState, useEffect, MouseEventHandler, MouseEvent } from 'react';
 import { DaysOfWeekProps } from "@/app/notes/_interfaces/DaysOfWeekProps";
-import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner";
+import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner/CyberpunkSpinner";
+import styles from './DaysOfWeek.module.css';
 
 export default function DaysOfWeek({ dateSelected, setDateSelected, setUpperDateBound, setLowerDateBound }: DaysOfWeekProps): ReactElement  {
     //need days just for this component. If this is used in others, then move to a constants file.
@@ -63,21 +64,20 @@ export default function DaysOfWeek({ dateSelected, setDateSelected, setUpperDate
     function getDaysOfWeek() {
         return isLoading ?
             <CyberpunkSpinner /> :
-            <div className={"days-of-week-panel"}>
+            <div className={styles.panel}>
             <p>Current Date Selected: {dateSelected}</p>
             {previousSevenDays.map((day: any, item: number) => (
-                <button key={item} value={day.date} className={"panel-button"}
+                <button key={item} value={day.date} className={styles.panelButton}
                         onClick={handleDateSelected}>{day.dateString}</button>))}
-            <button key={7} value={""} className={"reset-filter-button"}
+            <button key={7} value={""} className={styles.resetButton}
                     onClick={handleDateSelected}>Reset Date Filters
             </button>
         </div>;
     }
 
-//reverse the previousSevenDays array so that the days are in the correct order.
     return (
-        <div>
-            <h3 className={"days-of-week-header"}>Filter: Previous 7 Days</h3>
+        <div className={styles.container}>
+            <h3 className={styles.header}>Filter: Previous 7 Days</h3>
             {getDaysOfWeek()}
         </div>
     );

@@ -1,4 +1,4 @@
-import Notes from "@/app/notes/_components/Notes";
+import Notes from "@/app/notes/_components/Notes/Notes";
 
 export default function Home() {
   return (

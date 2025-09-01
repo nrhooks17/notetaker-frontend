@@ -1,7 +1,8 @@
 import React, { useRef, useState, ReactElement } from "react";
 import { NotebookProvider } from "@/app/notes/_repositories/NotebookProvider";
 import { NotebookCreateProps } from "../_interfaces/NotebookCreateProps";
-import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner";
+import CyberpunkSpinner from "@/app/notes/_components/CyberpunkSpinner/CyberpunkSpinner";
+import styles from './NotebookCreate.module.css';
 
 /**
  * Component to create a new notebook
@@ -42,15 +43,14 @@ export default function NotebookCreate ({setNotebook, setNotebookCreated, notebo
         return notebooksLoading ?
             <CyberpunkSpinner /> :
             <>
-              <input type="text" placeholder="Notebook Name" onChange={handleNotebookInputChange} value={newNotebook} className={"create-notebook-input"}/>
-              <input type="submit" value={"Create"} className={"create-notebook-button"}/>
+              <input type="text" placeholder="Notebook Name" onChange={handleNotebookInputChange} value={newNotebook} className={styles.input}/>
+              <input type="submit" value={"Create"} className={styles.button}/>
             </>;
     }
 
-// jsx code
     return (
-        <form className={'notebook-create'} onSubmit={submitNotebook}>
-            <h3 className={"notebook-section-title"}>Create Notebook:</h3>
+        <form className={styles.notebookCreate} onSubmit={submitNotebook}>
+            <h3 className={styles.sectionTitle}>Create Notebook:</h3>
             {getNotebookCreateForm()}
         </form>
     )

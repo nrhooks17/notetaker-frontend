@@ -1,0 +1,56 @@
+.noteListContainer {
+  /* Styling handled by parent sections */
+}
+
+.noteListText {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.noteListText li {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border: 2px solid #334155;
+  border-left: 5px solid #00ff88;
+  padding: 20px 25px;
+  border-radius: 10px;
+  width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #cbd5e1;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.noteListText li::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(180deg, #00ff88, #00cc6a, #00ff88);
+  transition: all 0.4s ease;
+}
+
+.noteListText li:hover {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-color: #00ff88;
+  color: #e2e8f0;
+  box-shadow: 
+    0 8px 30px rgba(0, 255, 136, 0.15),
+    inset 0 1px 0 rgba(0, 255, 136, 0.1);
+  transform: translateX(8px);
+}
+
+.noteListText li:hover::before {
+  width: 10px;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+}

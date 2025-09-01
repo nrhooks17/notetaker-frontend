@@ -1,0 +1,9 @@
+.dateHeader {
+  color: #00ff88;
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+  font-family: 'Orbitron', monospace;
+}

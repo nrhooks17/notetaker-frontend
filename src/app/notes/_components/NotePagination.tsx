@@ -1,6 +1,7 @@
 import { MouseEventHandler, useState, useEffect, useContext, MouseEvent, ReactElement } from "react";
 import { NotePaginationContext } from "@/app/notes/_components/_contexts/NotePaginationContext";
 import { NotePaginationContextType } from "@/app/notes/_interfaces/NotePaginationContextType";
+import styles from './NotePagination.module.css';
 export default function NotePagination(): ReactElement{
 
     const notePaginationProps: NotePaginationContextType = useContext(NotePaginationContext)
@@ -21,7 +22,7 @@ export default function NotePagination(): ReactElement{
                 key={i}
                 onClick={changePage}
                 value={pageNumber}
-                className={`pagination-button ${ i === (page - 1) ? 'active' : ''}`}
+                className={`${styles.paginationButton} ${ i === (page - 1) ? styles.active : ''}`}
             >{pageNumber}</button>
             buttons.push(pageButton);
         }
@@ -33,7 +34,7 @@ export default function NotePagination(): ReactElement{
     }, [totalPages, page])
 
     return (
-        <div className={'note-pagination'}>
+        <div className={styles.notePagination}>
             {pageButtons.map((pageButtons, index) => (
                 <div key={index} id={"page_button_" + index}>
                     {pageButtons}
