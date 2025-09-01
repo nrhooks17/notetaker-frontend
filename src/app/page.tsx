@@ -1,7 +1,7 @@
-import Image from 'next/image'
+import Notes from "@/app/notes/_components/Notes";
 
 export default function Home() {
   return (
-      <h1>Notes</h1>
-  )
+    <Notes />
+  );
 }

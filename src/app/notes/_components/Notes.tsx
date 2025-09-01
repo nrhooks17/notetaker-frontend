@@ -154,21 +154,43 @@ export default function Notes(): ReactElement {
 
     return (
         <div className={'container'}>
-            <header className={'flow note-header'}>
-                <h1>Note Taker</h1>
-                <span>Current Notebook: {notebook}</span>
+            <header className={'note-header'}>
+                <h1>// Note Taker</h1>
+                <span>Active Notebook: {notebook || 'None Selected'}</span>
             </header>
-            <NoteInput page={page} notebook={notebook} handleNoteSubmitted={handleNoteSubmitted}></NoteInput>
-            <NotePaginationContext.Provider value={notePaginationProps}>
-                <NoteList notes={notes} notesLoading={notesLoading}></NoteList>
-            </NotePaginationContext.Provider>
-            <NotebookCreate setNotebook={setNotebook} setNotebookCreated={setNotebookCreated} notebooksLoading={notebooksLoading}></NotebookCreate>
-            <NotebookSelect handleNotebookChanged={handleNotebookChanged} notebooks={notebooks}
-                            notebook={notebook} notebooksLoading={notebooksLoading}></NotebookSelect>
-            <CurrentDate></CurrentDate>
-            <DaysOfWeek dateSelected={dateSelected} setDateSelected={setDateSelected}
-                        setUpperDateBound={setUpperDateBound} setLowerDateBound={setLowerDateBound}></DaysOfWeek>
-            <NoteSearch setNotesSearchString={setNotesSearchString} setPage={setPage}></NoteSearch>
+
+            <aside className={'sidebar-nav'}>
+                <DaysOfWeek dateSelected={dateSelected} setDateSelected={setDateSelected}
+                            setUpperDateBound={setUpperDateBound} setLowerDateBound={setLowerDateBound}></DaysOfWeek>
+            </aside>
+
+            <main className={'main-content'}>
+                <section className={'input-section'}>
+                    <NoteInput page={page} notebook={notebook} handleNoteSubmitted={handleNoteSubmitted}></NoteInput>
+                </section>
+                
+                <section className={'notes-section'}>
+                    <NotePaginationContext.Provider value={notePaginationProps}>
+                        <NoteList notes={notes} notesLoading={notesLoading}></NoteList>
+                    </NotePaginationContext.Provider>
+                </section>
+
+                <section className={'search-section'}>
+                    <NoteSearch setNotesSearchString={setNotesSearchString} setPage={setPage}></NoteSearch>
+                </section>
+            </main>
+
+            <aside className={'right-panel'}>
+                <div className={'date-display'}>
+                    <CurrentDate></CurrentDate>
+                </div>
+                
+                <div className={'notebook-controls'}>
+                    <NotebookCreate setNotebook={setNotebook} setNotebookCreated={setNotebookCreated} notebooksLoading={notebooksLoading}></NotebookCreate>
+                    <NotebookSelect handleNotebookChanged={handleNotebookChanged} notebooks={notebooks}
+                                    notebook={notebook} notebooksLoading={notebooksLoading}></NotebookSelect>
+                </div>
+            </aside>
         </div>
     );
 }
